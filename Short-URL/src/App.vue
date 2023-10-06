@@ -69,6 +69,7 @@ onMounted(() =>{
   </template>
   
   <script>
+import Vue from 'vue/dist/vue.js'; // หรือเวอร์ชันอื่น ๆ ของ Vue.js ที่คุณใช้
   export default {
     data() {
       return {
