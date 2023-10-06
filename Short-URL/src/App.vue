@@ -65,12 +65,14 @@ onMounted(() =>{
         <button type="submit">Generate Short URL</button>
       </form>
       <p v-if="shortURL">Short URL: {{ shortURL }}</p>
+      <button @click="fetchData()">history</button>
     </div>
   </template>
   
   <script>
-import Vue from 'vue/dist/vue.js'; // หรือเวอร์ชันอื่น ๆ ของ Vue.js ที่คุณใช้
+
   export default {
+    el: '#app',
     data() {
       return {
         originalURL: "",
@@ -90,8 +92,24 @@ import Vue from 'vue/dist/vue.js'; // หรือเวอร์ชันอื
         const data = await response.json();
         this.shortURL = data.shortURL;
       },
+      
     },
-  };
+    async fetchdata(){
+  try {
+    const response = await fetch('http://localhost:3000/api/short'); // เปลี่ยน '/api/data' เป็น URL ของ API ของคุณ
+    
+    if (!response.ok) {
+      throw new Error('ไม่สามารถเรียกข้อมูลได้');
+    }
+
+    const data = await response.json();
+    console.log('ข้อมูลที่ได้:', data);
+  } catch (error) {
+    console.error('เกิดข้อผิดพลาด:', error);
+  }
+}
+    
+}
   </script>
   
 

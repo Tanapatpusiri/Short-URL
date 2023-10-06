@@ -110,7 +110,9 @@ app.get("/:shortURL", async (req, res) => {
   }
 });
 
-
+  app.get('/api/short', (req, res) => {
+    ShortURL.find({}).then((shortURL) => res.json(shortURL))
+  });
 
 const corsOptions = {
   origin: '*', // ระบุ * เพื่ออนุญาตให้ทุกโดเมนเรียกใช้งาน
