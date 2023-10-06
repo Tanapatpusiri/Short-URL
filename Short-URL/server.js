@@ -101,21 +101,19 @@ app.post("/api/shorten", async (req, res) => {
   res.json({ shortURL });
 });
 
-app.get("/:shortURL", async (req, res) => {
-  const { shortURL } = req.params;
-  const result = await ShortURL.findOne({ shortURL });
-
-  if (result) {
-    res.redirect(result.originalURL);
-  } else {
-    res.status(404).send("Short URL not found");
-  }
-});
+app.get('/:shortURL', async (req , res) =>{
+  const shortURL = await ShortURL.findOne({ shortURL: req.params.shortURL });
+  if (shortURL == null) return res.sendStatus(404);
+  await ShortURL.updateOne({ shortURL: req.params.shortURL }, { $inc: { clickCount: 1 } });
+  res.redirect(shortURL.originalURL)
+})
 
   app.get('/api/short', (req, res) => {
     ShortURL.find({}).then((shortURL) => res.json(shortURL))
   });
 
+
+  
 // const corsOptions = {
 //   origin: '*', // ระบุ * เพื่ออนุญาตให้ทุกโดเมนเรียกใช้งาน
 //   methods: ['GET', 'OPTIONS', 'POST'], // ระบุ HTTP methods ที่อนุญาต

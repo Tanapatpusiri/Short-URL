@@ -1,119 +1,67 @@
-<!-- <script setup>
-import { ref,onMounted } from 'vue';
-import axios from 'axios';
- const fullUrl = ref('')
- const shortUrls = ref([]);
+
  
- 
-const createShortUrl = async() => {
-    try {
-      const  data  = await axios.post('/api/shorten', { fullUrl: fullUrl.value }, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (data.shortUrl) {
-        shortUrl = data.shortUrl;
-        console.log(data);
-        fullUrl.value = ''; // ล้างค่าใน input
-      } else {
-        console.error('ไม่สามารถสร้าง Short URL ได้');
-      }
-    } catch (error) {
-      console.error('เกิดข้อผิดพลาดในการสร้าง Short URL', error);
-    }
-  }
-
-  const fetchShortUrls = async () => {
-  try {
-    const  data  = await axios.get('/api/short'); // เรียก API ด้วย HTTP GET
-    shortUrls.value = data; // เก็บผลลัพธ์ลงใน shortUrls
-  } catch (error) {
-    console.error('เกิดข้อผิดพลาดในการดึง Short URLs', error);
-  }
-};
-
-onMounted(() =>{
-  fetchShortUrls()
- })
-</script>
 <template>
- <div id="app" class="flex flex-col items-center mt-8">
-  <input v-model="fullUrl" placeholder="ป้อน URL ที่คุณต้องการสร้าง Short URL" class="border p-2 rounded-lg mb-4  w-96">
-  <button @click="createShortUrl" class="bg-green-500 hover:bg-green-600 h-12 w-36  rounded-lg text-white">สร้าง Short URL</button>
-
-   <div v-if="shortUrl" class="mt-4">
-    <p class="text-lg font-semibold">Short URL: <a :href="shortUrl" target="_blank" class="text-blue-500">{{ shortUrl }}</a></p>
-    <img :src="qrcodeImage" alt="QR Code" class="mt-2">
-  </div>
-
-  <h2 class="mt-8 text-xl font-semibold">ประวัติการสร้าง Short URL</h2>
-  <ul class="mt-4">
-    <li v-for="(item, index) in history" :key="index" class="mb-4">
-      <p class="text-lg font-semibold">Short URL: <a :href="item.shortUrl" target="_blank" class="text-blue-500">{{ item.shortUrl }}</a></p>
-      <img :src="item.qrcode" alt="QR Code" class="mt-2">
-    </li>
-  </ul> -->
- 
-  <template>
-    <div class="container mt-5 flex justify-center items-center min-h-screen">
-      <h1 class="text-center">Short URL Generator</h1>
-      <div class="row justify-content-center">
-        <div class="col-md-6">
-          <form @submit.prevent="generateShortURL" class="mb-4">
-            <div class="input-group">
-              <input v-model="originalURL" class="form-control" placeholder="Enter URL" />
-              <div class="input-group-append">
-                <button type="submit" class="btn btn-primary">Generate Short URL</button>
-              </div>
+  <div class="bg-blue-500 min-h-screen py-10">
+    <div class="container mx-auto">
+      <h1 class="text-center text-3xl font-bold text-white mb-6">Short URL Generator</h1>
+      <div class="flex justify-center">
+        <div class="box bg-white p-6 rounded-lg shadow-lg mb-20 w-full md:w-2/3 lg:w-1/2 xl:w-3/4">
+          <form @submit.prevent="generateShortURL">
+            <div class="mb-4">
+              <input v-model="originalURL" class="w-full px-4 py-2 border rounded-md" placeholder="Enter URL" />
+            </div>
+            <div class="flex justify-center space-x-4">
+              <button type="submit" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg">Generate Short URL</button>
+              <button type="submit" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg">Generate QRCODE</button>
             </div>
           </form>
-          <p v-if="shortURL" class="alert alert-success">
-            <strong>Short URL:</strong> <a :href="shortURL" target="_blank">{{ shortURL }}</a>
+          <p v-if="shortURL" class="mt-4 bg-green-100 px-4 py-2 rounded-lg">
+            <strong>Short URL:</strong> <a :href="'http://localhost:3000/' + shortURL" class="text-green-600">{{ shortURL }}</a>
           </p>
-          <form @submit.prevent="fetchdata">
-            <button type="submit" class="btn btn-secondary">History Short URL</button>
-          </form>
+        </div>
+      </div>
+      <div class="bg-blue-500 min-h-screen py-10">
+        <div class="container mx-auto">
+          <h1 class="text-center text-3xl font-bold text-white mb-6">History</h1>
+          <div class="mt-5 bg-white p-6 ml-1 rounded-lg shadow-lg">
+            <form @submit.prevent="fetchdata">
+              <div class="flex justify-center">
+                <button type="submit" class="mt-4 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-lg mb-5">History Short URL</button>
+              </div>
+            </form>
+            <table class="table border-collapse w-full">
+              <thead>
+                <tr class="bg-gray-300">
+                  <th class="py-2 px-4">Original URL</th>
+                  <th class="py-2 px-4">Short URL</th>
+                  <th class="py-2 px-4">Click Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="url in urls" :key="url.id" class="border-b">
+                  <td class="py-2 px-4">{{ url.originalURL }}</td>
+                  <td class="py-2 px-4">
+                    <a :href="'http://localhost:3000/' + url.shortURL" class="text-blue-500 hover:underline pl-4 md:pl-16">{{ url.shortURL }}</a>
+                  </td>
+                  <td class="py-2 px-4 pl-4 md:pl-20">{{ url.clickCount }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
+
   
   <style scoped>
-  .min-h-screen {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-  .container {
-    max-width: 600px;
-  }
+
+
+   .box{
+    width: 1550px;
+   }
   
-  .col-md-6 {
-    background-color: #257beb;
-    padding: 20px;
-    border-radius: 10px;
-  }
-  
-  .input-group {
-    margin-bottom: 20px;
-  }
-  
-  .btn-primary {
-    width: 100%;
-  }
-  
-  .alert-success {
-    padding: 10px;
-    border-radius: 5px;
-    text-align: center;
-  }
-  
-  .alert-success a {
-    text-decoration: none;
-  }
   </style>
   
   <script>
@@ -124,6 +72,7 @@ onMounted(() =>{
       return {
         originalURL: "",
         shortURL: "",
+        urls: [],
       };
     },
     methods: {
@@ -144,13 +93,13 @@ onMounted(() =>{
     async fetchdata(){
   try {
     const response = await fetch('http://localhost:3000/api/short'); // เปลี่ยน '/api/data' เป็น URL ของ API ของคุณ
-    
+    // http://localhost:3000/OZ8Y42g8o
     if (!response.ok) {
       throw new Error('ไม่สามารถเรียกข้อมูลได้');
     }
 
-    const data = await response.json();
-    console.log('ข้อมูลที่ได้:', data);
+    this.urls = await response.json();
+    // console.log('ข้อมูลที่ได้:',urls);
   } catch (error) {
     console.error('เกิดข้อผิดพลาด:', error);
   }
