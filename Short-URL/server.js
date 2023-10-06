@@ -52,15 +52,17 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const shortid = require("shortid");
 const mongoose = require("mongoose");
-
+const app = express();
+const cors = require("cors");
+app.use(cors());
+app.use(bodyParser.json());
 // mongoose.connect("mongodb://localhost/shorturl", {
 //   useNewUrlParser: true,
 //   useUnifiedTopology: true,
 // });
 
-const app = express();
-app.use(bodyParser.json());
-const cors = require('cors');
+
+
 
 const ShortURL = mongoose.model("ShortURL", {
      originalURL: {
@@ -114,12 +116,22 @@ app.get("/:shortURL", async (req, res) => {
     ShortURL.find({}).then((shortURL) => res.json(shortURL))
   });
 
-const corsOptions = {
-  origin: '*', // ระบุ * เพื่ออนุญาตให้ทุกโดเมนเรียกใช้งาน
-  methods: ['GET', 'OPTIONS', 'POST'], // ระบุ HTTP methods ที่อนุญาต
-};
+// const corsOptions = {
+//   origin: '*', // ระบุ * เพื่ออนุญาตให้ทุกโดเมนเรียกใช้งาน
+//   methods: ['GET', 'OPTIONS', 'POST'], // ระบุ HTTP methods ที่อนุญาต
+// };
 
-app.use(cors(corsOptions));
+
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*"); // สามารถเปลี่ยน * เป็นโดเมนของเว็บที่คุณต้องการอนุญาต
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");

@@ -56,18 +56,65 @@ onMounted(() =>{
     </li>
   </ul> -->
  
-
   <template>
-    <div>
-      <h1>Short URL Generator</h1>
-      <form @submit.prevent="generateShortURL">
-        <input v-model="originalURL" placeholder="Enter URL" />
-        <button type="submit">Generate Short URL</button>
-      </form>
-      <p v-if="shortURL">Short URL: {{ shortURL }}</p>
-      <button @click="fetchData()">history</button>
+    <div class="container mt-5 flex justify-center items-center min-h-screen">
+      <h1 class="text-center">Short URL Generator</h1>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <form @submit.prevent="generateShortURL" class="mb-4">
+            <div class="input-group">
+              <input v-model="originalURL" class="form-control" placeholder="Enter URL" />
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Generate Short URL</button>
+              </div>
+            </div>
+          </form>
+          <p v-if="shortURL" class="alert alert-success">
+            <strong>Short URL:</strong> <a :href="shortURL" target="_blank">{{ shortURL }}</a>
+          </p>
+          <form @submit.prevent="fetchdata">
+            <button type="submit" class="btn btn-secondary">History Short URL</button>
+          </form>
+        </div>
+      </div>
     </div>
   </template>
+  
+  <style scoped>
+  .min-h-screen {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+  .container {
+    max-width: 600px;
+  }
+  
+  .col-md-6 {
+    background-color: #257beb;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .input-group {
+    margin-bottom: 20px;
+  }
+  
+  .btn-primary {
+    width: 100%;
+  }
+  
+  .alert-success {
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
+  .alert-success a {
+    text-decoration: none;
+  }
+  </style>
   
   <script>
 
@@ -93,7 +140,7 @@ onMounted(() =>{
         this.shortURL = data.shortURL;
       },
       
-    },
+    
     async fetchdata(){
   try {
     const response = await fetch('http://localhost:3000/api/short'); // เปลี่ยน '/api/data' เป็น URL ของ API ของคุณ
@@ -110,6 +157,7 @@ onMounted(() =>{
 }
     
 }
+  }
   </script>
   
 
